@@ -30,10 +30,11 @@ module.exports = {
 		extensions: ['.js', '.min.js'],
 	},
 	devServer: {
-		contentBase: path.join(__dirname, "dist"),
+		static: {
+			directory: path.join(__dirname, "dist"),
+		},
 		compress: true,
-		inline: true,
-		port: 8080
+		port: 9000
 	},
 	output: {
 		path: path.join(__dirname, 'dist'),

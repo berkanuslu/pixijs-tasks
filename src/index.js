@@ -1,8 +1,9 @@
 import Game from './Game';
 
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', async function () {
 
         //Game starts from here
-        let game = new Game().load();
+        let game = new Game();
+        await game.load();
 
 }, false);

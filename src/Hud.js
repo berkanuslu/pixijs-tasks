@@ -1,7 +1,7 @@
-import { Container, Point, Text, loader } from 'pixi.js';
+import * as PIXI from 'pixi.js';
 import { assign as _extend } from 'lodash/object';
 
-class Hud extends Container {
+class Hud extends PIXI.Container {
 
         /**
          * Hud Constructor
@@ -25,14 +25,14 @@ class Hud extends Container {
                                 align: 'left',
                                 fill: 'white'
                         },
-                        position: new Point(0, 0),
+                        position: new PIXI.Point(0, 0),
                         anchor: {
                                 x: 0.5,
                                 y: 0.5
                         }
                 }, opts);
 
-                this[name + 'TextBox'] = new Text('', options.textStyle);
+                this[name + 'TextBox'] = new PIXI.Text('', options.textStyle);
                 const textBox = this[name + 'TextBox'];
                 textBox.position.set(options.position.x, options.position.y);
                 textBox.anchor.set(options.anchor.x, options.anchor.y);
@@ -53,7 +53,7 @@ class Hud extends Container {
                         textAllignment: 1,
                         textMargin: 10,
                         spritesheet: '',
-                        position: new Point(0, 0),
+                        position: new PIXI.Point(0, 0),
                         textStyle: {
                                 fontFamily: 'Arial',
                                 fontSize: '18px',
@@ -66,23 +66,23 @@ class Hud extends Container {
                         }
                 }, opts);
 
-                this[name + 'Container'] = new Container();
+                this[name + 'Container'] = new PIXI.Container();
                 const container = this[name + 'Container'];
                 container.position.set(options.position.x, options.position.y);
 
-                const button = new PIXI.Sprite(loader.resources[options.spritesheet].textures[options.spriteName]);
+                const button = new PIXI.Sprite(PIXI.Assets.get(options.spritesheet).textures[options.spriteName]);
                 button.position.set(button.width, 0);
                 button.anchor.set(options.anchor.x, options.anchor.y);
                 container.addChild(button);
 
-                this[name + 'TextBox'] = new Text(options.text, options.textStyle);
+                this[name + 'TextBox'] = new PIXI.Text(options.text, options.textStyle);
                 const textBox = this[name + 'TextBox'];
                 textBox.position.set((button.width + textBox.width + options.textMargin) * options.textAllignment, 0);
                 textBox.anchor.set(options.anchor.x * options.textAllignment, 0.5 * options.textAllignment);
                 container.addChild(textBox);
 
-                container.interactive = true;
-                container.buttonMode = true;
+                container.eventMode = 'static';
+                container.cursor = 'pointer';
                 container.on('pointerdown', pointerdown);
 
                 this.addChild(container);
@@ -99,7 +99,7 @@ class Hud extends Container {
                         text: '',
                         textMargin: 10,
                         spritesheet: '',
-                        position: new Point(0, 0),
+                        position: new PIXI.Point(0, 0),
                         textStyle: {
                                 fontFamily: 'Arial',
                                 fontSize: '18px',
@@ -116,7 +116,7 @@ class Hud extends Container {
                 let randomFontSize = this.randomInt(12, 48);
                 options.textStyle.fontSize = randomFontSize + "px";
 
-                this[name + 'Container'] = new Container();
+                this[name + 'Container'] = new PIXI.Container();
                 const container = this[name + 'Container'];
                 container.position.set(options.position.x, options.position.y);
 
@@ -128,7 +128,7 @@ class Hud extends Container {
                         if (randomElement == 0) {
                                 //select random sprites from the spritesheet
                                 options.spriteName = ((this.randomInt(0, 1) == 1 ? 'dieWhite_border' : 'dieRed_border') + this.randomInt(1, 6) + '.png');
-                                const sprite = new PIXI.Sprite(loader.resources[options.spritesheet].textures[options.spriteName]);
+                                const sprite = new PIXI.Sprite(PIXI.Assets.get(options.spritesheet).textures[options.spriteName]);
 
                                 //some calculation about text and sprite position x in grid
                                 middleElementWidth = i == 1 ? sprite.width : middleElementWidth;
@@ -140,7 +140,7 @@ class Hud extends Container {
                         } else {
                                 //select random text values from the capital city of countries array
                                 options.text = this.randomText();
-                                this[name + 'TextBox'] = new Text(options.text, options.textStyle);
+                                this[name + 'TextBox'] = new PIXI.Text(options.text, options.textStyle);
                                 const textBox = this[name + 'TextBox'];
 
                                 //some calculation about text and sprite position x in grid

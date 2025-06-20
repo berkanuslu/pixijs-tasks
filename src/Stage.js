@@ -1,11 +1,4 @@
-import {
-	Point,
-	Container,
-	loader
-} from 'pixi.js';
-import {
-	FX
-} from 'revolt-fx';
+import * as PIXI from 'pixi.js';
 import Hud from './Hud';
 import Card from './Card';
 
@@ -13,18 +6,18 @@ const MAX_X = window.innerWidth;
 const MAX_Y = window.innerHeight;
 
 const HUD_POSITIONS = {
-	RIGHT_TOP_CORNER: new Point(MAX_X - 125, 20),
-	RIGHT_BOTTOM_CORNER: new Point(MAX_X - 10, MAX_Y - 20),
-	CENTER: new Point(MAX_X * 0.50, MAX_Y * 0.50),
-	CENTER_TOP: new Point(MAX_X * 0.50 - 200, 10),
-	TASK1_BUTTON: new Point(MAX_X * 0.50 - 125, MAX_Y * 0.35),
-	TASK2_BUTTON: new Point(MAX_X * 0.50 - 125, MAX_Y * 0.50),
-	TASK3_BUTTON: new Point(MAX_X * 0.50 - 125, MAX_Y * 0.65),
-	LEFT_TOP_CORNER: new Point(MAX_X * 0.01, 20),
-	LEFT_BOTTOM_CORNER: new Point(10, MAX_Y * 0.95)
+	RIGHT_TOP_CORNER: new PIXI.Point(MAX_X - 125, 20),
+	RIGHT_BOTTOM_CORNER: new PIXI.Point(MAX_X - 10, MAX_Y - 20),
+	CENTER: new PIXI.Point(MAX_X * 0.50, MAX_Y * 0.50),
+	CENTER_TOP: new PIXI.Point(MAX_X * 0.50 - 200, 10),
+	TASK1_BUTTON: new PIXI.Point(MAX_X * 0.50 - 125, MAX_Y * 0.35),
+	TASK2_BUTTON: new PIXI.Point(MAX_X * 0.50 - 125, MAX_Y * 0.50),
+	TASK3_BUTTON: new PIXI.Point(MAX_X * 0.50 - 125, MAX_Y * 0.65),
+	LEFT_TOP_CORNER: new PIXI.Point(MAX_X * 0.01, 20),
+	LEFT_BOTTOM_CORNER: new PIXI.Point(10, MAX_Y * 0.95)
 };
 
-class Stage extends Container {
+class Stage extends PIXI.Container {
 
 	/**
 	 * Stage Constructor
@@ -36,14 +29,6 @@ class Stage extends Container {
 		super();
 		this.spritesheet = opts.spritesheet;
 		this.hud = new Hud();
-
-		this.fx = new FX();
-
-		this.ticker = new PIXI.ticker.Ticker();
-		this.ticker.start();
-		this.ticker.add((delta) => {
-			this.fx.update();
-		});
 
 		this._initStage();
 	}
@@ -59,7 +44,7 @@ class Stage extends Container {
 		this.selectedTask = -1;
 
 		this.hud.addText('welcome', {
-			text: 'Welcome to PixiJS Tasks of Berkan USLU',
+			text: 'Welcome to PixiJS Tasks',
 			textStyle: {
 				fontFamily: 'Arial',
 				fontSize: '18px',
@@ -235,7 +220,7 @@ class Stage extends Container {
 			let index = (i > 52 ? i - 53 : i);
 			index = (index > 52 ? index - 53 : index);
 
-			let sprite = new PIXI.Sprite(loader.resources[this.spritesheet].textures['card' + index + '.png']);
+			let sprite = new PIXI.Sprite(PIXI.Assets.get(this.spritesheet).textures['card' + index + '.png']);
 			sprite.position.set(150, 50 + spritePadding);
 			spritePadding += 5; // add some padding
 			this.sprites.push(sprite);
@@ -271,7 +256,7 @@ class Stage extends Container {
 	animate() {
 		if (this.cardCollection) {
 			for (let card of this.cardCollection) {
-				card.move(this.ticker.elapsedMS);
+				card.move(16); // Fixed 60 FPS timing
 			}
 		}
 	}
@@ -300,7 +285,7 @@ class Stage extends Container {
 
 	tickTask2Timer() {
 		if (this.randomContainerDuration > 0) {
-			this.randomContainerTimer += this.ticker.elapsedMS;
+			this.randomContainerTimer += 16; // Fixed 60 FPS timing
 			if (this.randomContainerTimer >= this.randomContainerDuration) {
 				this.startTask2();
 			}
@@ -315,23 +300,23 @@ class Stage extends Container {
 	}
 
 	startTask3() {
-		var content = new PIXI.Container();
-		content.x = window.innerWidth * 0.5;
-		content.y = window.innerHeight * 0.5;
+		this.selectedTask = 3;
+		
+		// Create content container with modern positioning
+		const content = new PIXI.Container();
+		content.position.set(window.innerWidth * 0.5, window.innerHeight * 0.5);
 		this.addChild(content);
 
-		var graphics = new PIXI.Graphics();
-
-		graphics.lineStyle(2, 0x64b0ff, 1);
-		graphics.beginFill(0x383838, 1);
-		graphics.drawRect(-1 * MAX_X * 0.35, -1 * MAX_Y * 0.4, MAX_X * 0.7, MAX_Y * 0.8);
+		// Create graphics with modern PixiJS v8 API
+		const graphics = new PIXI.Graphics();
+		
+		// Use modern graphics API - lineStyle and beginFill are deprecated
+		graphics.setStrokeStyle({ width: 2, color: 0x64b0ff, alpha: 1 });
+		graphics.fill({ color: 0x383838, alpha: 1 });
+		graphics.rect(-1 * MAX_X * 0.35, -1 * MAX_Y * 0.4, MAX_X * 0.7, MAX_Y * 0.8);
+		graphics.fill();
+		
 		content.addChild(graphics);
-
-		//add fire-arc fx from RevoltFX library
-		//changed variables in assets/defult-bundle.json using the editor at https://editor.revoltfx.electronauts.net/
-		var emitter = this.fx.getParticleEmitter('fire-arc', true, true);
-		emitter.settings.autoRotation = false;
-		emitter.init(content);
 	}
 
 	stopTask3() {

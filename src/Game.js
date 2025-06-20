@@ -1,4 +1,4 @@
-import { loader, autoDetectRenderer, utils } from 'pixi.js';
+import * as PIXI from 'pixi.js';
 import { noop as _noop } from 'lodash/util';
 import Stage from './Stage';
 
@@ -11,40 +11,53 @@ class Game {
          */
         constructor() {
                 this.spritesheet = 'assets/spritesheetcollection.json';
-                this.loader = loader;
-                this.renderer = autoDetectRenderer(window.innerWidth, window.innerHeight, {
-                        backgroundColor: BACKGROUND_COLOR,
-                        antialias: true
-                });
+                this.app = new PIXI.Application();
 
                 return this;
         }
 
-        load() {
-                this.loader
-                        .add('fx_settings', 'assets/default-bundle.json')
-                        .add('fx_spritesheet', 'assets/revoltfx-spritesheet.json')
-                        .add(this.spritesheet)
-                        .load(this.onLoad.bind(this));
-        }
+        async load() {
+                // Load assets individually using PixiJS v8 Assets API
+                await PIXI.Assets.load(this.spritesheet);
 
-        onLoad(loader, resources) {
-                document.body.appendChild(this.renderer.view);
+                // Initialize the application
+                await this.app.init({ 
+                        background: BACKGROUND_COLOR, 
+                        resizeTo: window, 
+                        antialias: true,
+                        resolution: window.devicePixelRatio || 1,
+                        autoDensity: true
+                });
 
+                // Append the application canvas to the document body
+                document.body.appendChild(this.app.canvas);
+                
                 this.timer = 0;
 
-                this.stage = new Stage({
+                this.gameStage = new Stage({
                         spritesheet: this.spritesheet
                 });
 
-                this.resizeWindow();
-                this.initFX(resources);
-                this.bindEvents();
-                this.update();
-        }
+                this.app.stage.addChild(this.gameStage);
 
-        initFX(resources) {
-                this.stage.fx.initBundle(resources.fx_settings.data);
+                this.resizeWindow();
+                this.bindEvents();
+                
+                // Use the ticker for the update loop
+                this.app.ticker.add((time) =>
+                {
+                         // deltaTime is provided by the ticker
+                        this.timer += time.deltaTime * 16; // Convert to milliseconds
+
+                        this.gameStage.animate();
+                        this.gameStage.tickTask2Timer();
+
+                        if (this.timer >= 1000) {
+                                this.timer = 0;
+
+                                this.gameStage.addSpriteToReversedArray();
+                        }
+                });
         }
 
         bindEvents() {
@@ -52,28 +65,7 @@ class Game {
         }
 
         resizeWindow() {
-                this.renderer.resize(window.innerWidth, window.innerHeight);
-        }
-
-        update() {
-                this.renderer.render(this.stage);
-
-                if (this.stage.ticker.started) {
-                        this.stage.setFPSText('FPS: ' + Math.floor(this.stage.ticker.FPS));
-
-                        this.timer += this.stage.ticker.elapsedMS;
-
-                        this.stage.animate();
-                        this.stage.tickTask2Timer();
-
-                        if (this.timer >= 1000) {
-                                this.timer = 0;
-
-                                this.stage.addSpriteToReversedArray();
-                        }
-                }
-
-                requestAnimationFrame(this.update.bind(this));
+                this.app.resize(window.innerWidth, window.innerHeight);
         }
 }
 

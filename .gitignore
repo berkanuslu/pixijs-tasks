@@ -3,3 +3,4 @@ node_modules
 npm-debug.log
 .tscache
 .vscode
+package-lock.json

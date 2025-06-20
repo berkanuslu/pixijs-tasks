@@ -1,7 +1,7 @@
 {
 	"name": "berkanuslu_pixijs_tasks",
 	"version": "1.0.0",
-	"description": "PixiJS Tasks of Berkan USLU",
+	"description": "PixiJS Tasks",
 	"private": true,
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
@@ -10,20 +10,19 @@
 		"build": "webpack"
 	},
 	"keywords": [],
-	"author": "Berkan USLU",
+	"author": "Berkan Uslu",
 	"license": "ISC",
 	"devDependencies": {
-		"@babel/core": "^7.2.0",
-		"@babel/preset-env": "^7.2.0",
-		"babel-loader": "^8.0.4",
-		"file-loader": "^2.0.0",
-		"webpack": "^4.27.1",
-		"webpack-cli": "^3.1.2",
-		"webpack-dev-server": "^3.1.11"
+		"@babel/core": "^7.27.4",
+		"@babel/preset-env": "^7.27.2",
+		"babel-loader": "^10.0.0",
+		"file-loader": "^6.2.0",
+		"webpack": "^5.99.9",
+		"webpack-cli": "^6.0.1",
+		"webpack-dev-server": "^5.2.2"
 	},
 	"dependencies": {
 		"lodash": "^4.17.11",
-		"pixi.js": "^4.8.3",
-		"revolt-fx": "^1.0.1"
+		"pixi.js": "^8.10.1"
 	}
 }
