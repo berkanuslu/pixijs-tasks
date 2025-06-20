@@ -28,7 +28,12 @@ class Stage extends PIXI.Container {
 	constructor(opts) {
 		super();
 		this.spritesheet = opts.spritesheet;
+		this.maggot_texture = opts.maggot_texture;
 		this.hud = new Hud();
+
+  		this.particleContainer = new PIXI.Container();
+		this.maggots = [];
+		this.tick = 0;
 
 		this._initStage();
 	}
@@ -304,19 +309,84 @@ class Stage extends PIXI.Container {
 		
 		// Create content container with modern positioning
 		const content = new PIXI.Container();
-		content.position.set(window.innerWidth * 0.5, window.innerHeight * 0.5);
+		content.position.set(window.innerWidth * 0.25, window.innerHeight * 0.25);
 		this.addChild(content);
 
-		// Create graphics with modern PixiJS v8 API
-		const graphics = new PIXI.Graphics();
+		this.maggots = [];
+		this.particleContainer = new PIXI.Container();
 		
-		// Use modern graphics API - lineStyle and beginFill are deprecated
-		graphics.setStrokeStyle({ width: 2, color: 0x64b0ff, alpha: 1 });
-		graphics.fill({ color: 0x383838, alpha: 1 });
-		graphics.rect(-1 * MAX_X * 0.35, -1 * MAX_Y * 0.4, MAX_X * 0.7, MAX_Y * 0.8);
-		graphics.fill();
+		const totalSprites = 10000;
+
+		const dudeBoundsPadding = 500;
+		this.dudeBounds = new PIXI.Rectangle(
+				-dudeBoundsPadding,
+				-dudeBoundsPadding,
+				window.innerWidth + dudeBoundsPadding * 2,
+				window.innerHeight + dudeBoundsPadding * 2,
+		);
+
+		for (let i = 0; i < totalSprites; i++) {
+			// Create a new maggot Sprite
+			const dude = new PIXI.Sprite(this.maggot_texture);
+
+			// Set the anchor point so the texture is centerd on the sprite
+			dude.anchor.set(0.5);
+
+			// Different maggots, different sizes
+			dude.scale.set(0.8 + Math.random() * 0.3);
+
+			// Scatter them all
+			dude.x = Math.random() * window.innerWidth * 0.5;
+			dude.y = Math.random() * window.innerHeight * 0.5;
+
+			dude.tint = Math.random() * 0x808080;
+
+			// Create a random direction in radians
+			dude.direction = Math.random() * Math.PI * 2;
+
+			// This number will be used to modify the direction of the sprite over time
+			dude.turningSpeed = Math.random() - 0.8;
+
+			// Create a random speed between 0 - 2, and these maggots are slooww
+			dude.speed = (2 + Math.random() * 2) * 0.2;
+
+			dude.offset = Math.random() * 100;
+
+			// Finally we push the dude into the maggots array so it it can be easily accessed later
+			this.maggots.push(dude);
+
+			this.particleContainer.addChild(dude);
+		}
+
+		content.addChild(this.particleContainer);
+	}
+
+	tickTask3Timer() {
+		// Iterate through the sprites and update their position
+		for (let i = 0; i < this.maggots.length; i++) {
+				const dude = this.maggots[i];
+
+				dude.scale.y = 0.95 + Math.sin(this.tick + dude.offset) * 0.05;
+				dude.direction += dude.turningSpeed * 0.01;
+				dude.x += Math.sin(dude.direction) * (dude.speed * dude.scale.y);
+				dude.y += Math.cos(dude.direction) * (dude.speed * dude.scale.y);
+				dude.rotation = -dude.direction + Math.PI;
+
+				// Wrap the maggots
+				if (dude.x < this.dudeBounds.x) {
+						dude.x += this.dudeBounds.width;
+				} else if (dude.x > this.dudeBounds.x + this.dudeBounds.width) {
+						dude.x -= this.dudeBounds.width;
+				}
+
+				if (dude.y < this.dudeBounds.y) {
+						dude.y += this.dudeBounds.height;
+				} else if (dude.y > this.dudeBounds.y + this.dudeBounds.height) {
+						dude.y -= this.dudeBounds.height;
+				}
+		}
 		
-		content.addChild(graphics);
+		this.tick += 1;
 	}
 
 	stopTask3() {

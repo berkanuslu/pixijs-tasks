@@ -19,6 +19,11 @@ class Game {
         async load() {
                 // Load assets individually using PixiJS v8 Assets API
                 await PIXI.Assets.load(this.spritesheet);
+                
+                //Original example
+                //https://pixijs.com/8.x/examples/basic/particle-container
+                //texture from: 'https://pixijs.com/assets/maggot_tiny.png'
+                this.maggot_texture = await PIXI.Assets.load('assets/maggot_tiny.png');
 
                 // Initialize the application
                 await this.app.init({ 
@@ -35,7 +40,8 @@ class Game {
                 this.timer = 0;
 
                 this.gameStage = new Stage({
-                        spritesheet: this.spritesheet
+                        spritesheet: this.spritesheet,
+                        maggot_texture: this.maggot_texture
                 });
 
                 this.app.stage.addChild(this.gameStage);
@@ -51,6 +57,7 @@ class Game {
 
                         this.gameStage.animate();
                         this.gameStage.tickTask2Timer();
+                        this.gameStage.tickTask3Timer();
 
                         if (this.timer >= 1000) {
                                 this.timer = 0;
