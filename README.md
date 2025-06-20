@@ -8,10 +8,10 @@ The test is split in 3 parts which should be accessed through an in-game menu. P
 
 2. Create a tool that will allow mixed text and images in an easy way (for example displaying text with emoticons or prices with money icon). It should come up every 2 seconds a random text with images in random configuration (image + text + image, image + image + image, image + image + text, text + image + text etc) and a random font size.
 
-3. Particles - make a demo that shows an awesome fire effect. Please keep number of images low (max 10 sprites on screen at once). Feel free to use existing libraries how you would use them in a real project.
+3. Particles - make a demo that shows worms spreading effect.
 
 ## Used Technologies
-- PixiJS 4.8.3
+- PixiJS 8.10.1
 - NPM
 - ES6 and Babel Compiler
 - Webpack
@@ -25,6 +25,3 @@ https://www.kenney.nl/assets/boardgame-pack
 
 - TexturePacker Free Version for Spritesheet Collection
 https://www.codeandweb.com/texturepacker
-
-- RevoltFX (MIT License) for Particle FX
-https://github.com/bma73/revolt-fx
