@@ -9,7 +9,7 @@ const HUD_POSITIONS = {
 	RIGHT_TOP_CORNER: new PIXI.Point(MAX_X - 125, 20),
 	RIGHT_BOTTOM_CORNER: new PIXI.Point(MAX_X - 10, MAX_Y - 20),
 	CENTER: new PIXI.Point(MAX_X * 0.50, MAX_Y * 0.50),
-	CENTER_TOP: new PIXI.Point(MAX_X * 0.50 - 200, 10),
+	CENTER_TOP: new PIXI.Point(MAX_X * 0.50 - 100, 10),
 	TASK1_BUTTON: new PIXI.Point(MAX_X * 0.50 - 125, MAX_Y * 0.35),
 	TASK2_BUTTON: new PIXI.Point(MAX_X * 0.50 - 125, MAX_Y * 0.50),
 	TASK3_BUTTON: new PIXI.Point(MAX_X * 0.50 - 125, MAX_Y * 0.65),
